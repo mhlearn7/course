@@ -1,0 +1,7 @@
+1. docker volume create dbstore
+
+2. docker network create mynet
+
+3. docker run --network mynet -v dbstore:/var/lib/mysql --name mydb -d  stackupiss/northwind-db:v1
+
+4. docker run --network mynet --name myapp -e DB_HOST=mydb -e DB_USER=root -e DB_PASSWORD=changeit -p 5000:5000 -d stackupiss/northwind-app:v1
