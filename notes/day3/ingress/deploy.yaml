@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+ name: devdeploy
+ labels:
+  name: devdeploy
+spec:
+ replicas: 1
+ selector:
+  matchLabels:
+   name: devpod
+ template:
+  metadata:
+   name: devpod
+   labels:
+    name: devpod
+  spec:
+   containers:
+   - name: devcontainer
+     image: stackupiss/dov-bear:v2
+     imagePullPolicy: IfNotPresent
+     ports:
+     - containerPort: 3000
+     env:
+     - name: INSTANCE_NAME
+       value: dov
+     - name: INSTANCE_HASH
+       value: hello
+~                           

@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+ name: devconfig
+ labels:
+  name: devconfig
+ namespace: ming1
+data:
+ instance_name: hello
+ instance_hash: you

@@ -1,0 +1,19 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+ name: devingress
+ labels:
+  name: devingress
+spec:
+ ingressClassName: nginx
+ rules:
+ - host: dev-167.99.29.163.nip.io
+   http:
+    paths:
+    - path: /
+      pathType: Prefix
+      backend:
+       service:
+        name: devservice
+        port:
+         number: 3000
