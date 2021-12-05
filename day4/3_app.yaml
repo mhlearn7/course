@@ -1,0 +1,54 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+ name: wordpressdeploy
+ labels:
+  name: wordpressdeploy
+spec:
+ replicas: 1
+ selector:
+  matchLabels:
+   name: wordpresspod
+ template:
+  metadata:
+   name: wordpresspod
+   labels:
+    name: wordpresspod
+  spec:
+   volumes:
+   - name: wordpresscontentvolume
+     persistentVolumeClaim:
+      claimName: devpvc
+   containers:
+   - name: container
+     image: wordpress:apache
+     imagePullPolicy: IfNotPresent
+     ports:
+     - containerPort: 80
+     env:
+     - name: WORDPRESS_DB_HOST
+       value: db-svc
+     - name: WORDPRESS_DB_USER
+       value: exampleuser
+     - name: WORDPRESS_DB_PASSWORD
+       value: examplepass
+     - name: WORDPRESS_DB_NAME
+       value: exampledb
+     volumeMounts:
+     - name: wordpresscontentvolume
+       mountPath: wordpress:/var/www/html
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+ name: wordpress-svc
+ labels:
+  name: wordpress-svc
+spec:
+ type: ClusterIP
+ selector:
+  name: wordpresspod
+ ports:
+ - port: 8080
+   targetPort: 80

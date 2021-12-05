@@ -1,0 +1,54 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+ name: wordpressdbdeploy
+ labels:
+  name: wordpressdbdeploy
+spec:
+ replicas: 1
+ selector:
+  matchLabels:
+   name: wordpressdbpod
+ template:
+  metadata:
+   name: wordpressdbpod
+   labels:
+    name: wordpressdbpod
+  spec:
+   volumes:
+   - name: wordpressdbvolume
+     persistentVolumeClaim:
+      claimName: devpvc
+   containers:
+   - name: container
+     image: mysql
+     imagePullPolicy: IfNotPresent
+     ports:
+     - containerPort: 3306
+     env:
+     - name: MYSQL_DATABASE
+       value: exampledb
+     - name: MYSQL_USER
+       value: exampleuser
+     - name: MYSQL_PASSWORD
+       value: examplepass
+     - name: MYSQL_RANDOM_ROOT_PASSWORD
+       value: '1'
+     volumeMounts:
+     - name: wordpressdbvolume
+       mountPath: db:/var/lib/mysql
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+ name: db-svc
+ labels:
+  name: db-svc
+spec:
+ type: ClusterIP
+ selector:
+  name: wordpressdbpod
+ ports:
+ - port: 3306
+   targetPort: 3306
