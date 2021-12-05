@@ -22,7 +22,7 @@ spec:
   spec:
    containers:
    - name: container
-     image: stackupiss/bgg-backend:v1
+     image: stackupiss/bgg-backend:v2
      imagePullPolicy: IfNotPresent
      ports:
      - containerPort: 3000
