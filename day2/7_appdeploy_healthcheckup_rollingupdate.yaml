@@ -1,0 +1,55 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+ name: devdeploy
+ labels:
+  name: devdeploy
+spec:
+ replicas: 3
+ selector:
+  matchLabels:
+   name: bggapp
+ strategy:
+  type: RollingUpdate
+  rollingUpdate:
+   maxSurge: 25%
+   maxUnavailable: 25%
+ template:
+  metadata:
+   name: bggapp
+   labels:
+    name: bggapp
+  spec:
+   containers:
+   - name: container
+     image: stackupiss/bgg-backend:v1
+     imagePullPolicy: IfNotPresent
+     ports:
+     - containerPort: 3000
+     env:
+      - name: BGG_DB_USER
+        valueFrom:
+         configMapKeyRef:
+          name: devconfig
+          key: bgg_db_user
+      - name: BGG_DB_HOST
+        value: devservice
+      - name: BGG_DB_PASSWORD
+        valueFrom:
+         secretKeyRef:
+          name: devsecret
+          key: bgg_db_password
+     livenessProbe:
+      httpGet:
+       path: /healthz
+       port: 3000
+      timeoutSeconds: 5
+      failureThreshold: 3
+      successThreshold: 1
+     readinessProbe:
+      httpGet:
+       path: /healthz
+       port: 3000
+      initialDelaySeconds: 5
+      timeoutSeconds: 5
+      failureThreshold: 1
