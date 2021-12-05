@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+ name: devdeploydb
+ labels:
+  name: devdeploydb
+spec:
+ replicas: 1
+ selector:
+  matchLabels:
+   name: devdb
+ template:
+  metadata:
+   name: devdb
+   labels:
+    name: devdb
+  spec:
+   containers:
+   - name: container
+     image: stackupiss/bgg-database:v1
+     imagePullPolicy: IfNotPresent
+     ports:
+     - containerPort: 3306
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+ name: bggdb-svc
+ labels:
+  name: bggdb-svc
+spec:
+ type: ClusterIP
+ selector:
+  name: devdb
+ ports:
+ - port: 3306
+   targetPort: 3306

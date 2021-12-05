@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+ name: devdeployapp2
+ labels:
+  name: devdeployapp2
+spec:
+ replicas: 1
+ selector:
+  matchLabels:
+   name: devapp2
+ template:
+  metadata:
+   name: devapp2
+   labels:
+    name: devapp2
+  spec:
+   containers:
+   - name: container
+     image: stackupiss/bgg-backend:v2
+     imagePullPolicy: IfNotPresent
+     args:
+     - --prefix
+     - /v2
+     ports:
+     - containerPort: 3000
+     env:
+     - name: BGG_DB_USER
+       value: root
+     - name: BGG_DB_PASSWORD
+       value: changeit
+     - name: BGG_DB_HOST
+       value: bggdb-svc
+     resources:
+      requests:
+       cpu: 100m
+       memory: 48Mi
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+ name: bggapp-svc2
+ labels:
+  name: bggapp-svc2
+spec:
+ type: ClusterIP
+ selector:
+  name: devapp2
+ ports:
+ - port: 8081
+   targetPort: 3000

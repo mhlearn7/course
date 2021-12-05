@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+ name: devdeployvolume
+ labels:
+  name: devdeployvolume
+spec:
+ replicas: 1
+ selector:
+  matchLabels:
+   name: devpodvolume
+ template:
+  metadata:
+   name: devpodvolume
+   labels:
+    name: devpodvolume
+  spec:
+   volumes:
+   - name: devvolume
+     persistentVolumeClaim:
+      claimName: devpvc
+   containers:
+   - name: container
+     image: stackupiss/bgg-database:v1
+     imagePullPolicy: IfNotPresent
+     ports:
+     - containerPort: 3306
+     volumeMounts:
+     - name: devvolume
+       mountPath: /var/lib/mysql
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+ name: devservice
+ labels:
+  name: devservice
+spec:
+ type: ClusterIP
+ selector:
+  name: devpodvolume
+ ports:
+ - port: 3306
+   targetPort: 3306
